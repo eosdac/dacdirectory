@@ -67,8 +67,32 @@ void dacdirectory::unregaccount( name dac_name, uint8_t type ){
 
     require_auth(dac_inst->owner);
 
-    _dacs.modify(dac_inst, same_payer, [&](dac& a) {
-        a.accounts.erase(type);
+    _dacs.modify(dac_inst, same_payer, [&](dac& d) {
+        d.accounts.erase(type);
+    });
+}
+
+void dacdirectory::regref( name dac_name, string value, uint8_t type ){
+
+    auto dac_inst = _dacs.find(dac_name.value);
+    check(dac_inst != _dacs.end(), "DAC not found in directory");
+
+    require_auth(dac_inst->owner);
+
+    _dacs.modify(dac_inst, same_payer, [&](dac& d) {
+        d.refs[type] = value;
+    });
+}
+
+void dacdirectory::unregref( name dac_name, uint8_t type ){
+
+    auto dac_inst = _dacs.find(dac_name.value);
+    check(dac_inst != _dacs.end(), "DAC not found in directory");
+
+    require_auth(dac_inst->owner);
+
+    _dacs.modify(dac_inst, same_payer, [&](dac& d) {
+        d.refs.erase(type);
     });
 }
 
